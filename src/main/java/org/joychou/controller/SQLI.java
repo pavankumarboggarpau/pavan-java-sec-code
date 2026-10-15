@@ -104,21 +104,20 @@ public class SQLI {
 
             // fix code
             String sql = "select * from users where username = ?";
-            PreparedStatement st = con.prepareStatement(sql);
-            st.setString(1, username);
+            try (PreparedStatement st = con.prepareStatement(sql)) {
+                st.setString(1, username);
 
-            logger.info(st.toString());  // sql after prepare statement
-            ResultSet rs = st.executeQuery();
-
-            while (rs.next()) {
-                String res_name = rs.getString("username");
-                String res_pwd = rs.getString("password");
-                String info = String.format("%s: %s\n", res_name, res_pwd);
-                result.append(info);
-                logger.info(info);
+                logger.info(st.toString());  // sql after prepare statement
+                try (ResultSet rs = st.executeQuery()) {
+                    while (rs.next()) {
+                        String res_name = rs.getString("username");
+                        String res_pwd = rs.getString("password");
+                        String info = String.format("%s: %s\n", res_name, res_pwd);
+                        result.append(info);
+                        logger.info(info);
+                    }
+                }
             }
-
-            rs.close();
             con.close();
 
         } catch (ClassNotFoundException e) {
