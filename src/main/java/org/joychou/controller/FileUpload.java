@@ -174,6 +174,9 @@ public class FileUpload {
     private File convert(MultipartFile multiFile) throws Exception {
         String fileName = multiFile.getOriginalFilename();
         String suffix = fileName.substring(fileName.lastIndexOf("."));
+        if (!suffix.matches("\\.[A-Za-z0-9]+")) {
+            throw new IOException("Invalid file suffix");
+        }
         UUID uuid = Generators.timeBasedGenerator().generate();
         randomFilePath = UPLOADED_FOLDER + uuid + suffix;
         // 随机生成一个同后缀名的文件
